@@ -3,137 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Follow-to-Follow FB- Exchange</title>
+    <title>FB Follow-to-Follow & Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        #timer-overlay { backdrop-filter: blur(8px); z-index: 9999; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .hidden-section { display: none; }
+        #timer-overlay { display: none; background: rgba(0,0,0,0.85); }
+        .color-dot { width: 25px; height: 25px; cursor: pointer; border-radius: 50%; border: 1px solid #fff; }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen transition-all duration-700" id="body-bg">
+<body id="main-body" class="bg-slate-900 text-white min-h-screen transition-all duration-500">
 
     <!-- Navbar -->
-    <nav class="bg-black/40 border-b border-white/10 p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-black tracking-tighter text-blue-500">FB-EXCHANGE</h1>
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <p id="user-balance" class="text-green-400 font-bold text-lg leading-none">$0.00000</p>
-                    <p id="display-id" class="text-[10px] text-gray-400 uppercase tracking-widest">ID: Loading...</p>
-                </div>
-                <button onclick="toggleSection('admin-sec')" class="text-xs opacity-20 hover:opacity-100 transition"><i class="fas fa-lock"></i></button>
-            </div>
-        </div>
+    <nav class="bg-slate-800 p-4 sticky top-0 z-50 shadow-xl flex justify-between items-center">
+        <h1 class="font-bold text-xl text-blue-400">FB-Boost <i class="fab fa-facebook"></i></h1>
+        <div id="user-balance-top" class="text-green-400 font-mono">0.0000 USDT</div>
     </nav>
 
-    <div class="container mx-auto p-4 max-w-md pb-24">
+    <div class="container mx-auto p-4 pb-24">
         
-        <!-- Referral Info -->
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl mb-6 shadow-xl">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-bold uppercase opacity-80">Referral Program (20%)</span>
-                <span id="ref-count" class="bg-white/20 px-2 py-1 rounded text-[10px]">0 Invites</span>
-            </div>
-            <p id="ref-earnings" class="text-2xl font-black mb-3">$0.00 Total Earned</p>
-            <div class="flex gap-2">
-                <input id="ref-link" type="text" readonly class="flex-1 bg-black/20 p-2 rounded text-[10px] outline-none border border-white/10">
-                <button onclick="copyRef()" class="bg-white text-indigo-700 px-4 rounded font-bold text-xs uppercase">Copy</button>
-            </div>
+        <!-- Tab Navigation -->
+        <div class="flex flex-wrap gap-2 mb-6 justify-center">
+            <button onclick="showSection('home')" class="bg-blue-600 px-4 py-2 rounded text-sm">Dashboard</button>
+            <button onclick="showSection('tasks')" class="bg-green-600 px-4 py-2 rounded text-sm">Tasks</button>
+            <button onclick="showSection('profile')" class="bg-purple-600 px-4 py-2 rounded text-sm">Profile</button>
+            <button onclick="showSection('deposit')" class="bg-yellow-600 px-4 py-2 rounded text-sm">Deposit</button>
+            <button onclick="showSection('chat')" class="bg-pink-600 px-4 py-2 rounded text-sm">Chat</button>
+            <button onclick="showSection('admin-login')" class="bg-red-600 px-4 py-2 rounded text-sm">Admin</button>
         </div>
 
-        <!-- Background Customizer -->        <div class="flex justify-center gap-4 mb-8 bg-black/20 p-3 rounded-full border border-white/5">
-            <button onclick="changeBg('bg-slate-900')" class="w-6 h-6 rounded-full bg-slate-900 border border-white/40"></button>
-            <button onclick="changeBg('bg-blue-950')" class="w-6 h-6 rounded-full bg-blue-950 border border-white/40"></button>
-            <button onclick="changeBg('bg-emerald-950')" class="w-6 h-6 rounded-full bg-emerald-950 border border-white/40"></button>
-            <button onclick="changeBg('bg-rose-950')" class="w-6 h-6 rounded-full bg-rose-950 border border-white/40"></button>
-            <button onclick="changeBg('bg-indigo-950')" class="w-6 h-6 rounded-full bg-indigo-950 border border-white/40"></button>
-        </div>
+        <!-- Dashboard Section -->
+        <section id="home" class="section">
+            <div class="bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700">
+                <h2 class="text-2xl font-bold mb-4">Welcome, User <span id="display-id" class="text-blue-400">...</span></h2>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <p class="text-xs uppercase text-slate-400">Total Balance</p>
+                        <p id="stat-balance" class="text-xl font-bold">0.00 USDT</p>
+                    </div>
 
-        <!-- MAIN TASK BUTTON -->
-        <div class="mb-8">
-            <button id="task-btn" onclick="startTask()" class="group relative w-full bg-blue-600 hover:bg-blue-500 py-8 rounded-3xl overflow-hidden transition-all shadow-2xl active:scale-95">
-                <span class="relative z-10 text-3xl font-black tracking-widest">START TASK</span>
-                <p class="relative z-10 text-[10px] opacity-80 uppercase mt-1">Earn $0.00015 per 30s visit</p>
-                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform"></div>
-            </button>
-        </div>
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <p class="text-xs uppercase text-slate-400">Referrals</p>
+                        <p id="stat-refs" class="text-xl font-bold">0</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm mb-2">Register FB Page Link (100 Visits Free for 1st Link)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="fb-link-input" placeholder="https://facebook.com/yourpage" class="w-full bg-slate-700 border border-slate-600 p-2 rounded outline-none focus:border-blue-500">
+                        <button onclick="registerLink()" class="bg-blue-600 px-6 rounded font-bold">Register</button>
+                    </div>
+                </div>
 
-        <!-- Add Link Section -->
-        <div class="glass p-6 rounded-3xl mb-6 border border-white/10">
-            <h2 class="font-black mb-4 flex items-center gap-2"><i class="fab fa-facebook text-blue-400"></i> ADD FACEBOOK LINK</h2>
-            <div class="space-y-3">
-                <input id="fb-link-input" type="text" placeholder="https://facebook.com/your-link" class="w-full bg-black/40 p-4 rounded-xl text-sm border border-white/5 focus:border-blue-500 transition outline-none">
-                <input id="fb-desc-input" type="text" placeholder="Description (e.g. Follow for Follow Back)" class="w-full bg-black/40 p-4 rounded-xl text-sm border border-white/5 focus:border-blue-500 transition outline-none">                <button onclick="registerLink()" class="w-full bg-white text-black py-4 rounded-xl font-black text-sm hover:bg-blue-400 transition">REGISTER TASK</button>
-                <p class="text-[10px] text-center text-gray-500">First link: 100 VISITS FREE. Next: $0.02 USDT per 100.</p>
+                <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-500">
+                    <h3 class="font-bold mb-1">Referral Link</h3>
+                    <p class="text-xs mb-2">Earn 20% bonus from your friend's tasks!</p>
+                    <div class="bg-black/50 p-2 rounded text-xs break-all" id="ref-link">Loading...</div>
+                </div>
             </div>
-        </div>
 
-        <!-- Profile Section / Links Status -->
-        <div class="glass p-6 rounded-3xl mb-6 border border-white/10">
-            <h2 class="font-black mb-4 text-gray-400">MY ACTIVE LINKS</h2>
-            <div id="links-container" class="space-y-3">
-                <!-- Links injected here -->
+            <!-- Color Changer -->
+            <div class="mt-6 bg-slate-800 p-6 rounded-xl">
+                <h3 class="font-bold mb-3">Theme Settings (100 Colors)</h3>
+                <div id="color-palette" class="flex flex-wrap gap-2 overflow-y-auto max-h-32">
+                    <!-- Dots generated by JS -->
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Community Chat -->
-        <div class="glass p-6 rounded-3xl mb-6 border border-white/10">
-            <h2 class="font-black mb-4">COMMUNITY CHAT</h2>
-            <div id="chat-box" class="h-40 overflow-y-auto mb-4 space-y-2 p-2 bg-black/20 rounded-xl text-xs">
-                <!-- Chat here -->
+        <!-- Tasks Section -->
+        <section id="tasks" class="section hidden-section">
+            <div class="text-center py-10">
+                <i class="fas fa-tasks text-6xl text-green-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2">Earn 0.00015 USDT per Task</h2>
+                <p class="text-slate-400 mb-6 italic">Stay on the page for 30 seconds to get rewarded.</p>
+                <button onclick="startTask()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-10 rounded-full text-xl shadow-lg transform transition active:scale-95">
+                    CLICK TO START TASK
+                </button>
             </div>
-            <div class="flex gap-2">
-                <input id="chat-input" type="text" placeholder="Message..." class="flex-1 bg-black/40 p-3 rounded-xl text-xs border border-white/5">
-                <button onclick="sendChat()" class="bg-blue-600 px-5 rounded-xl"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+        </section>
 
-        <!-- Deposit -->
-        <div class="glass p-6 rounded-3xl mb-6 border border-white/10">
-            <h2 class="font-black mb-4">DEPOSIT (MIN $1 USDT)</h2>
-            <div class="grid grid-cols-1 gap-2 text-[10px] mb-4 text-gray-400">
-                <div class="bg-black/20 p-2 rounded">GCash: <span class="text-white">09952533453</span></div>
-                <div class="bg-black/20 p-2 rounded">FaucetPay: <span class="text-white">otico.isai2@gmail.com</span></div>
-                <div class="bg-black/20 p-2 rounded">PayPal: <span class="text-white">otico.isai2@gmail.com</span></div>
+        <!-- Profile Section -->
+        <section id="profile" class="section hidden-section">
+            <h2 class="text-2xl font-bold mb-4">My Links Status</h2>
+            <div id="user-links-list" class="space-y-3">
+                <!-- User links display here -->
             </div>
-            <div class="space-y-2">
-                <input id="dep-amount" type="number" placeholder="Amount ($)" class="w-full bg-black/40 p-3 rounded-xl text-xs border border-white/5">
-                <input id="dep-ref" type="text" placeholder="Reference Number" class="w-full bg-black/40 p-3 rounded-xl text-xs border border-white/5">
-                <select id="dep-method" class="w-full bg-black/40 p-3 rounded-xl text-xs border border-white/5 appearance-none">
-                    <option value="GCash">GCash</option>
-                    <option value="FaucetPay">FaucetPay</option>
-                    <option value="PayPal">PayPal</option>
-                </select>
-                <button onclick="submitDeposit()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-xs">SUBMIT DEPOSIT</button>
-            </div>
-        </div>
+        </section>
 
-        <!-- Admin Section (Hidden) -->
-        <section id="admin-sec" class="bg-red-950/30 p-6 rounded-3xl hidden border-2 border-red-500/50 mb-6">
-            <h2 class="text-lg font-black text-red-500 mb-4">ADMIN ACCESS</h2>
-            <input id="admin-pass" type="password" placeholder="Admin Password" class="w-full bg-black/60 p-3 rounded-xl text-xs mb-4">
-            <div id="admin-content" class="hidden space-y-4">
-                <h3 class="font-bold border-b border-red-500/20 pb-2">Pending Deposits</h3>
-                <div id="pending-deposits" class="space-y-2 text-[10px]"></div>
+        <!-- Deposit Section -->
+        <section id="deposit" class="section hidden-section">
+            <div class="bg-slate-800 p-6 rounded-xl border border-yellow-500/50">
+                <h2 class="text-xl font-bold mb-4">Deposit Funds (Min 1 USDT)</h2>
+                <div class="space-y-4 mb-6">
+                    <div class="bg-slate-700 p-3 rounded">
+                        <p class="text-sm font-bold">GCASH</p>
+                        <p class="text-lg text-blue-400">09952533453</p>
+                    </div>
+                    <div class="bg-slate-700 p-3 rounded">
+                        <p class="text-sm font-bold">FaucetPay / PayPal</p>
+                        <p class="text-lg text-blue-400">otico.isai2@gmail.com</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <input type="number" id="dep-amount" placeholder="Amount (USDT)" class="w-full bg-slate-700 p-2 rounded">
+                    <input type="text" id="dep-ref" placeholder="Reference Number / Email" class="w-full b
+
+g-slate-700 p-2 rounded">
+                    <select id="dep-method" class="w-full bg-slate-700 p-2 rounded text-white">
+                        <option value="GCASH">GCash</option>
+                        <option value="FaucetPay">FaucetPay</option>
+                        <option value="PayPal">PayPal</option>
+                    </select>
+                    <button onclick="submitDeposit()" class="w-full bg-yellow-600 font-bold py-2 rounded">Submit Deposit Request</button>
+                </div>
             </div>
-            <button onclick="authAdmin()" class="w-full bg-red-600 p-3 rounded-xl font-bold text-xs uppercase">Unlock Admin</button>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat" class="section hidden-section">
+            <div class="bg-slate-800 rounded-xl h-[500px] flex flex-col">
+                <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-2">
+                    <!-- Messages -->
+                </div>
+                <div class="p-4 border-t border-slate-700 flex gap-2">
+                    <input type="text" id="chat-input" placeholder="Say something..." class="flex-1 bg-slate-700 p-2 rounded">
+                    <button onclick="sendMessage()" class="bg-blue-600 px-4 rounded"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Section (Simple login) -->
+        <section id="admin-login" class="section hidden-section">
+            <div class="max-w-md mx-auto bg-slate-800 p-6 rounded">
+                <input type="password" id="admin-pass" placeholder="Admin Password" class="w-full bg-slate-700 p-2 rounded mb-4">
+                <button onclick="checkAdmin()" class="w-full bg-red-600 py-2 rounded">Login Admin</button>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard (Hidden) -->
+        <section id="admin-panel" class="section hidden-section">
+            <h2 class="text-2xl font-bold mb-4">Pending Deposits</h2>
+            <div id="admin-deposit-list" class="space-y-4">
+                <!-- Deposit requests for approval -->
+            </div>
         </section>
 
     </div>
 
     <!-- Timer Overlay -->
-    <div id="timer-overlay" class="fixed inset-0 bg-black flex flex-col items-center justify-center hidden">
-        <p id="timer-status" class="text-blue-400 font-bold mb-2">VISIT IN PROGRESS</p>
-        <div id="timer-display" class="text-8xl font-black mb-6">30</div>
-        <p class="text-gray-500 text-xs px-10 text-center">Do not leave the Facebook page until the timer hits zero or the task will fail.</p>
+    <div id="timer-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6">
+        <div class="bg-white text-black p-8 rounded-2xl text-center max-w-sm">
+            <h2 class="text-3xl font-bold mb-2" id="timer-display">30</h2>
+            <p class="text-lg mb-4">Follow the page and wait...</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div id="timer-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 100%"></div>
+            </div>
+            <p id="timer-msg" class="text-red-600 font-bold hidden">Task failed! Please stay there for 30 seconds.</p>
+        </div>
     </div>
 
-    <footer class="fixed bottom-0 left-0 right-0 glass border-t border-white/10 p-3 text-center">
-        <p id="footer-time" class="text-[10px] font-mono text-blue-400 mb-1"></p>
-        <p class="text-[9px] text-gray-500 tracking-tighter uppercase font-bold">Follow-to-Follow FB- EXCHANGE &copy; 2024</p>
+    <!-- Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+        <div id="footer-time"></div>
+        <div class="mt-1">Follow-to-Follow FB © <span id="year"></span></div>
     </footer>
 
+    <!-- Firebase SDK -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
