@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow-to-Follow FB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hidden { display: none; }
+        #timer-overlay { backdrop-filter: blur(5px); }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen transition-colors duration-500" id="body-bg">
+
+    <!-- Navigation -->
+    <nav class="bg-slate-800 p-4 shadow-xl sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-400">FB Follow Exchange</h1>
+            <div class="flex gap-4 items-center">
+                <span id="user-balance" class="bg-green-600 px-3 py-1 rounded-full text-sm">$0.00000</span>
+                <button onclick="toggleSection('admin-sec')" class="text-xs text-slate-500">Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 pb-20">
+        
+        <!-- Stats Card -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                <p class="text-gray-400 text-xs uppercase">Your Profile</p>
+                <p id="display-name" class="font-bold text-blue-300">Loading...</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                <p class="text-gray-400 text-xs uppercase">Referrals</p>
+                <p id="ref-count" class="font-bold text-yellow-500">0 Users ($0.00)</p>
+            </div>
+        </div>
+
+        <!-- Color Customizer -->
+        <div class="mb-6 flex gap-2 overflow-x-auto pb-2">
+            <button onclick="changeBg('bg-slate-900')" class="w-8 h-8 rounded-full bg-slate-900 border border-white"></button>
+            <button onclick="changeBg('bg-blue-900')" class="w-8 h-8 rounded-full bg-blue-900 border border-white"></button>
+            <button onclick="changeBg('bg-red-900')" class="w-8 h-8 rounded-full bg-red-900 border border-white"></button>
+            <button onclick="changeBg('bg-green-900')" class="w-8 h-8 rounded-full bg-green-900 border border-white"></button>            <button onclick="changeBg('bg-purple-900')" class="w-8 h-8 rounded-full bg-purple-900 border border-white"></button>
+        </div>
+
+        <!-- Task Button -->
+        <div class="text-center mb-8">
+            <button id="task-btn" onclick="startTask()" class="bg-blue-600 hover:bg-blue-500 w-full py-6 rounded-2xl text-2xl font-black shadow-lg transform active:scale-95 transition">
+                🚀 START TASK
+            </button>
+            <p class="text-xs text-gray-400 mt-2">Earn $0.00015 per 30-second follow</p>
+        </div>
+
+        <!-- Sections -->
+        <div class="space-y-6">
+            
+            <!-- Register Link -->
+            <section class="bg-slate-800 p-6 rounded-xl shadow-inner">
+                <h2 class="text-lg font-bold mb-4"><i class="fab fa-facebook mr-2"></i> Register FB Page</h2>
+                <input id="fb-link-input" type="text" placeholder="https://facebook.com/yourpage" class="w-full p-3 rounded bg-slate-700 mb-3 outline-none focus:ring-2 ring-blue-500">
+                <button onclick="registerLink()" class="w-full bg-green-600 p-3 rounded font-bold">Add Link</button>
+                <p class="text-[10px] mt-2 text-gray-400 text-center">First link: 100 Free Visits | Others: $0.02 per 100</p>
+            </section>
+
+            <!-- Profile & Links Status -->
+            <section class="bg-slate-800 p-6 rounded-xl">
+                <h2 class="text-lg font-bold mb-4">My Links Status</h2>
+                <div id="links-container" class="space-y-3 text-sm">
+                    <!-- Links injected here -->
+                </div>
+            </section>
+
+            <!-- Referral Section -->
+            <section class="bg-slate-800 p-6 rounded-xl border border-yellow-600/30">
+                <h2 class="text-lg font-bold text-yellow-500 mb-2">Invite & Earn 20%</h2>
+                <p class="text-xs mb-3 text-gray-300">Get 20% bonus from every task your friends complete!</p>
+                <div class="flex gap-2">
+                    <input id="ref-link" type="text" readonly class="w-full bg-slate-900 p-2 rounded text-xs">
+                    <button onclick="copyRef()" class="bg-slate-700 px-4 rounded text-xs">Copy</button>                </div>
+            </section>
+
+            <!-- Chat -->
+            <section class="bg-slate-800 p-6 rounded-xl">
+                <h2 class="text-lg font-bold mb-4">Community Chat</h2>
+                <div id="chat-box" class="h-48 overflow-y-auto mb-4 p-2 bg-slate-900 rounded text-sm space-y-2">
+                    <!-- Messages here -->
+                </div>
+                <div class="flex gap-2">
+                    <input id="chat-input" type="text" placeholder="Type a message..." class="flex-1 bg-slate-700 p-2 rounded outline-none">
+                    <button onclick="sendChat()" class="bg-blue-600 px-4 rounded"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </section>
+
+            <!-- Deposit -->
+            <section class="bg-slate-800 p-6 rounded-xl">
+                <h2 class="text-lg font-bold mb-4">Deposit (Min $1 USDT)</h2>
+                <div class="text-xs space-y-2 mb-4 text-gray-300">
+                    <p>GCash: <span class="text-white">09952533453</span></p>
+                    <p>FaucetPay: <span class="text-white">otico.isai2@gmail.com</span></p>
+                    <p>PayPal: <span class="text-white">otico.isai2@gmail.com</span></p>
+                </div>
+                <input id="dep-amount" type="number" placeholder="Amount ($)" class="w-full bg-slate-700 p-2 rounded mb-2">
+                <input id="dep-ref" type="text" placeholder="Reference Number" class="w-full bg-slate-700 p-2 rounded mb-2">
+                <select id="dep-method" class="w-full bg-slate-700 p-2 rounded mb-4">
+                    <option value="GCash">GCash</option>
+                    <option value="FaucetPay">FaucetPay</option>
+                    <option value="PayPal">PayPal</option>
+                </select>
+                <button onclick="submitDeposit()" class="w-full bg-indigo-600 p-2 rounded font-bold">Submit Deposit Request</button>
+            </section>
+
+            <!-- Admin Section -->
+            <section id="admin-sec" class="bg-slate-800 p-6 rounded-xl hidden border-2 border-red-500">
+                <h2 class="text-lg font-bold text-red-500 mb-4">Admin Panel</h2>
+                <input id="admin-pass" type="password" placeholder="Password" class="w-full bg-slate-700 p-2 rounded mb-4">
+                <div id="admin-content" class="hidden space-y-4">
+                    <h3 class="font-bold border-b border-slate-600">Pending Deposits</h3>
+                    <div id="pending-deposits" class="space-y-2 text-xs"></div>
+                </div>
+                <button onclick="authAdmin()" class="w-full bg-red-600 p-2 rounded mt-2">Login Admin</button>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Task Timer Overlay -->
+    <div id="timer-overlay" class="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center hidden">
+        <div class="text-center">
+            <p id="timer-msg" class="text-xl mb-4 font-bold">Please follow the page...</p>
+            <div id="timer-circle" class="text-6xl font-black text-blue-500 mb-4">30</div>
+            <p class="text-gray-400 text-sm">Do not close this tab or return early!</p>
+        </div>
+    </div>
+
+    <footer class="fixed bottom-0 w-full bg-slate-800 p-2 text-center text-[10px] text-gray-500 border-t border-slate-700">
+        <p id="footer-time"></p>
+        <p>&copy; 2024 Follow-to-Follow FB- Exchange</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
