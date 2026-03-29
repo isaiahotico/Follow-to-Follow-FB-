@@ -3,177 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FB Boost & Earn PRO</title>
+    <title>FB-BOOST ELITE | Earn & Grow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .hidden-section { display: none; }
-        #timer-overlay { display: none; background: rgba(0,0,0,0.95); z-index: 1000; }
-        .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(20px, 1fr)); gap: 4px; }
-        .color-dot { width: 20px; height: 20px; cursor: pointer; border-radius: 4px; }
+        #timer-overlay { display: none; background: rgba(0,0,0,0.96); z-index: 1000; }
+        .color-dot { width: 18px; height: 18px; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* Banner Styles */
-        .banner-wrapper { 
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            padding: 10px; 
-            background: rgba(0,0,0,0.5);
-            border-top: 1px solid #334155;
+        /* Fixed Ad Grid: 4 Columns */
+        .ad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            padding: 5px;
+            background: #000;
         }
-        .banner-card { 
-            min-width: 160px; 
-            height: 100px; /* Forced small height for bottom display */
-            background: #1e293b;
+        .ad-slot {
+            aspect-ratio: 1/1.5;
+            background: #111;
+            border-radius: 4px;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            transform: scale(0.6); /* Making it "small size" as requested */
-            transform-origin: top left;
-            margin-right: -60px; /* Adjusting for scale */
+            border: 1px solid #222;
         }
-        ::-webkit-scrollbar { height: 4px; width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        .ad-slot iframe { width: 100%; height: 100%; border: none; transform: scale(0.5); transform-origin: top left; width: 200%; height: 200%; }
+
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .glow-text { text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        
+        @keyframes pulse-border {
+            0% { border-color: rgba(59, 130, 246, 0.5); }
+            50% { border-color: rgba(16, 185, 129, 0.5); }
+            100% { border-color: rgba(59, 130, 246, 0.5); }
+        }
+        .active-task { animation: pulse-border 2s infinite; }
     </style>
 </head>
-<body id="main-body" class="bg-slate-900 text-white min-h-screen transition-all duration-700 pb-40">
+<body id="main-body" class="bg-slate-950 text-slate-200 min-h-screen transition-all duration-700 pb-64">
 
     <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
-    <nav class="bg-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center border-b border-slate-700 shadow-xl">
-        <h1 class="font-black text-xl text-blue-500 italic">FB-BOOST</h1>
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 glass p-4 flex justify-between items-center shadow-2xl">
+        <div>
+            <h1 class="font-black text-xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">FB-ELITE</h1>
+            <div id="display-id-top" class="text-[9px] font-mono text-slate-500 uppercase tracking-widest">ID: ...</div>
+        </div>
         <div class="text-right">
-            <div id="user-balance-top" class="text-green-400 font-mono font-bold text-lg">0.0000</div>
-            <div id="display-id-top" class="text-[10px] text-slate-500">ID: ...</div>
+            <div id="user-balance-top" class="text-xl font-black text-emerald-400 glow-text">0.00000</div>            <p class="text-[9px] text-slate-500 font-bold uppercase">Available USDT</p>
         </div>
     </nav>
 
-    <div class="container mx-auto p-4 max-w-xl">
-        <!-- Navigation -->
-        <div class="flex overflow-x-auto gap-2 mb-6 py-2 no-scrollbar">            <button onclick="showSection('home')" class="shrink-0 bg-slate-800 px-4 py-2 rounded-lg text-xs font-bold border border-slate-700">HOME</button>
-            <button onclick="showSection('tasks')" class="shrink-0 bg-green-600 px-4 py-2 rounded-lg text-xs font-bold">EARN</button>
-            <button onclick="showSection('profile')" class="shrink-0 bg-slate-800 px-4 py-2 rounded-lg text-xs font-bold border border-slate-700">LINKS</button>
-            <button onclick="showSection('deposit')" class="shrink-0 bg-slate-800 px-4 py-2 rounded-lg text-xs font-bold border border-slate-700">DEPOSIT</button>
-            <button onclick="showSection('chat')" class="shrink-0 bg-slate-800 px-4 py-2 rounded-lg text-xs font-bold border border-slate-700">CHAT</button>
-            <button onclick="showSection('admin-login')" class="shrink-0 bg-red-900/40 px-4 py-2 rounded-lg text-xs font-bold">ADMIN</button>
+    <div class="container mx-auto p-4 max-w-lg">
+        
+        <!-- Quick Stats / Excitement Info -->
+        <div class="grid grid-cols-3 gap-2 mb-6 text-center">
+            <div class="glass p-2 rounded-xl">
+                <p class="text-[9px] uppercase text-slate-500">Global Users</p>
+                <p class="text-xs font-bold text-blue-400" id="live-users">1,240</p>
+            </div>
+            <div class="glass p-2 rounded-xl">
+                <p class="text-[9px] uppercase text-slate-500">Total Paid</p>
+                <p class="text-xs font-bold text-emerald-400">$450.25</p>
+            </div>
+            <div class="glass p-2 rounded-xl">
+                <p class="text-[9px] uppercase text-slate-500">Your Rank</p>
+                <p class="text-xs font-bold text-yellow-500">NOVICE</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto gap-2 mb-6 no-scrollbar py-1">
+            <button onclick="showSection('home')" class="shrink-0 glass px-4 py-2 rounded-full text-[10px] font-black uppercase">Dashboard</button>
+            <button onclick="showSection('tasks')" class="shrink-0 bg-emerald-600 px-5 py-2 rounded-full text-[10px] font-black uppercase shadow-lg shadow-emerald-900/40">Earn USDT</button>
+            <button onclick="showSection('profile')" class="shrink-0 glass px-4 py-2 rounded-full text-[10px] font-black uppercase">My Links</button>
+            <button onclick="showSection('deposit')" class="shrink-0 glass px-4 py-2 rounded-full text-[10px] font-black uppercase">Wallet</button>
+            <button onclick="showSection('chat')" class="shrink-0 glass px-4 py-2 rounded-full text-[10px] font-black uppercase">Global Chat</button>
+            <button onclick="showSection('admin-login')" class="shrink-0 bg-red-900/20 border border-red-500/30 px-4 py-2 rounded-full text-[10px] font-black uppercase text-red-400">Admin</button>
         </div>
 
         <!-- Dashboard -->
         <section id="home" class="section space-y-4">
-            <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700">
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Current Balance</p>
-                <h2 id="stat-balance" class="text-4xl font-black text-white mb-4">0.0000 <span class="text-sm text-green-500">USDT</span></h2>
+            <div class="glass p-6 rounded-[2rem] relative overflow-hidden">                <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-600/10 rounded-full blur-3xl"></div>
+                <h2 class="text-xs font-black text-blue-400 mb-4 tracking-[0.3em] uppercase">Promotion Center</h2>
                 
-                <div class="bg-blue-600/10 border border-blue-500/20 p-4 rounded-2xl mb-4">
-                    <p class="text-xs font-bold text-blue-400 mb-2">Invite Link (20% Bonus)</p>
-                    <div id="ref-link" class="text-[10px] break-all font-mono bg-black/40 p-2 rounded">...</div>
-                    <div class="flex gap-4 mt-3">
-                        <div class="text-center"><p class="text-[10px] text-slate-500">Refs</p><p id="stat-refs" class="font-bold">0</p></div>
-                        <div class="text-center"><p class="text-[10px] text-slate-500">Bonus Earned</p><p id="stat-ref-earn" class="font-bold text-green-500">0.00</p></div>
+                <div class="space-y-4 mb-6">
+                    <div class="group">
+                        <label class="text-[10px] font-bold text-slate-500 ml-2 mb-1 block">FACEBOOK PAGE/POST LINK</label>
+                        <input type="text" id="fb-link-input" placeholder="https://facebook.com/..." class="w-full bg-slate-900/50 border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 transition-all text-sm">
+                    </div>
+                    <button onclick="registerLink()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 py-4 rounded-2xl font-black text-sm shadow-xl transition-all active:scale-95">REGISTER & BOOST</button>
+                    <p class="text-center text-[10px] text-slate-500 italic">🎁 First link is 100% FREE (100 Visits)</p>
+                </div>
+
+                <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+                    <p class="text-[10px] font-bold text-emerald-400 mb-2 uppercase">Referral Multiplier (20%)</p>
+                    <div id="ref-link" class="text-[10px] break-all font-mono text-slate-400 bg-slate-950 p-3 rounded-xl border bordxt-slate-500 uppercase font-bold">PayPal / FaucetPay</p>
+                        <p class="text-md font-black text-blue-400 select-all">otico.isai2@gmail.com</p>
                     </div>
                 </div>
-
-                <div class="space-y-2">                    <input type="text" id="fb-link-input" placeholder="Facebook Link" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl outline-none text-sm">
-                    <button onclick="registerLink()" class="w-full bg-blue-600 py-3 rounded-xl font-black text-sm">REGISTER FB LINK</button>
-                </div>
-            </div>
-
-            <!-- Colors -->
-            <div class="bg-slate-800 p-4 rounded-2xl">
-                <button onclick="toggleColors()" class="w-full text-xs font-bold text-slate-400">CHANGE THEME (550+ COLORS)</button>
-                <div id="color-palette-container" class="hidden mt-3">
-                    <div id="color-palette" class="color-grid h-40 overflow-y-auto"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Tasks -->
-        <section id="tasks" class="section hidden-section text-center py-10">
-            <div class="bg-slate-800 p-8 rounded-[40px] border border-green-500/30">
-                <i class="fas fa-dollar-sign text-5xl text-green-500 mb-4"></i>
-                <h2 class="text-2xl font-black mb-2">Social Tasks</h2>
-                <p class="text-slate-400 text-sm mb-6 px-4">Follow random users and wait 30s to get 0.00015 USDT reward.</p>
-                <button onclick="startTask()" class="bg-green-600 px-10 py-4 rounded-2xl font-black text-lg shadow-lg shadow-green-900/40">START EARNING</button>
-            </div>
-        </section>
-
-        <!-- Profile -->
-        <section id="profile" class="section hidden-section space-y-3">
-            <h2 class="font-black text-xl italic">MY CAMPAIGNS</h2>
-            <div id="user-links-list" class="space-y-3"></div>
-        </section>
-
-        <!-- Deposit -->
-        <section id="deposit" class="section hidden-section space-y-4">
-            <div class="bg-slate-800 p-6 rounded-3xl border border-yellow-500/20">
-                <h2 class="text-yellow-500 font-black mb-4 italic">DEPOSIT (MIN 1 USDT)</h2>
-                <div class="text-[11px] space-y-2 mb-6">
-                    <div class="bg-black/20 p-2 rounded">GCASH: <b>09952533453</b></div>
-                    <div class="bg-black/20 p-2 rounded">PAYPAL/FP: <b>otico.isai2@gmail.com</b></div>
-                </div>
                 <div class="space-y-3">
-                    <input type="number" id="dep-amount" placeholder="Amount USDT" class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700 outline-none">
-                    <input type="text" id="dep-ref" placeholder="Reference Number" class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700 outline-none">
-                    <select id="dep-method" class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700">
+                    <input type="number" id="dep-amount" placeholder="Amount (Min 1 USDT)" class="w-full bg-slate-900 p-4 rounded-xl border border-slate-700 outline-none">
+                    <input type="text" id="dep-ref" placeholder="Reference Number" class="w-full bg-slate-900 p-4 rounded-xl border border-slate-700 outline-none">
+                    <select id="dep-method" class="w-full bg-slate-900 p-4 rounded-xl border border-slate-700 text-sm">
                         <option>GCASH</option><option>FaucetPay</option><option>PayPal</option>
                     </select>
-                    <button onclick="submitDeposit()" class="w-full bg-yellow-600 py-3 rounded-xl font-black">SUBMIT</button>
+                    <button onclick="submitDeposit()" class="w-full bg-yellow-600 py-4 rounded-2xl font-black shadow-lg">CONFIRM DEPOSIT</button>
                 </div>
             </div>
         </section>
 
-        <!-- Chat -->
         <section id="chat" class="section hidden-section">
-            <div class="bg-slate-800 rounded-3xl h-[400px] flex flex-col overflow-hidden border border-slate-700">
-                <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-2 text-sm"></div>
-                <div class="p-3 bg-slate-900 flex gap-2">
-                    <input type="text" id="chat-input" class="flex-1 bg-slate-800 p-2 rounded-lg outline-none">
-                    <button onclick="sendMessage()" class="bg-blue-600 px-4 rounded-lg"><i class="fas fa-paper-plane"></i></button>
+            <div class="glass rounded-3xl h-[450px] flex flex-col overflow-hidden">
+                <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs"></div>
+                <div class="p-4 bg-black/40 flex gap-2">
+                    <input type="text" id="chat-input" placeholder="Message Global Community..." class="flex-1 bg-slate-800 p-3 rounded-xl outline-none text-xs">
+                    <button onclick="sendMessage()" class="bg-blue-600 w-12 rounded-xl flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
 
-        <!-- Admin -->
         <section id="admin-login" class="section hidden-section">
-            <div class="bg-slate-800 p-6 rounded-3xl">
-                <input type="password" id="admin-pass" class="w-full bg-slate-900 p-3 rounded-xl mb-3 text-center" placeholder="Admin Key">
-                <button onclick="checkAdmin()" class="w-full bg-red-600 py-3 rounded-xl font-bold">LOGIN ADMIN</button>
+            <div class="glass p-8 rounded-3xl max-w-sm mx-auto">
+                <h2 class="text-center font-black mb-6">STAFF ONLY</h2>
+                <input type="password" id="admin-pass" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-4 text-center" placeholder="Access Key">
+                <button onclick="checkAdmin()" class="w-full bg-red-600 py-3 rounded-xl font-black">LOGIN</button>
             </div>
         </section>
 
         <section id="admin-panel" class="section hidden-section space-y-6">
-            <div>
-                <h3 class="font-black text-red-500 mb-3">PENDING DEPOSITS</h3>
+            <h2 class="text-red-500 font-black">ADMIN CONTROL</h2>
+            <div class="glass p-4 rounded-2xl">
+                <h3 class="text-xs font-bold mb-3 uppercase">Pending Deposits</h3>
                 <div id="admin-deposit-list" class="space-y-2"></div>
             </div>
-            <div>
-                <h3 class="font-black text-blue-500 mb-3">GLOBAL LINKS (MANAGE)</h3>
+            <div class="glass p-4 rounded-2xl">
+                <h3 class="text-xs font-bold mb-3 uppercase">Global Task Management</h3>
                 <div id="admin-links-list" class="space-y-2"></div>
             </div>
         </section>
     </div>
 
-    <!-- Timer Overlay -->
-    <div id="timer-overlay" class="fixed inset-0 flex items-center justify-center p-6 text-center">
-        <div class="bg-slate-900 border-2 border-blue-600 p-8 rounded-[50px] shadow-[0_0_60px_rgba(37,99,235,0.4)] max-w-xs w-full">
-            <h2 class="text-6xl font-black italic mb-2" id="timer-display">30</h2>
-            <p class="text-blue-500 font-bold mb-6 tracking-widest uppercase">Keep FB Open</p>
-            <p id="timer-msg" class="text-red-500 font-black animate-pulse hidden">FAILED! RESTARTING TIMER...</p>
+    <!-- 4 Column Mini Banner Ads -->
+    <div class="fixed bottom-12 left-0 right-0 z-40">
+        <div id="banners-area" class="ad-grid">
+            <!-- 4 Small ads generated by JS -->
         </div>
     </div>
 
-    <!-- Ad Banners (Bottom) -->
-    <div class="fixed bottom-12 left-0 right-0 z-40 bg-black/80">
-        <div id="banners-area" class="banner-wrapper">
-            <!-- Ad Cards go here -->
+    <!-- Timer Overlay -->
+    <div id="timer-overlay" class="fixed inset-0 flex items-center justify-center p-6">
+        <div class="bg-slate-900 border-t-4 border-blue-500 p-10 rounded-[3rem] shadow-2xl text-center max-w-xs w-full">
+            <div class="w-24 h-24 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto mb-6 flex items-center justify-center">
+                <h2 class="text-4xl font-black italic animate-none" id="timer-display" style="animation: none;">30</h2>
+            </div>
+            <p class="text-blue-400 font-black text-xs tracking-widest uppercase mb-4">Verification in Progress</p>
+            <p id="timer-msg" class="text-red-500 font-black text-[10px] animate-bounce hidden uppercase">Do not return! Stay on Facebook!</p>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="fixed bottom-0 left-0 right-0 bg-slate-950 p-3 text-center border-t border-slate-800 z-50">
-        <p id="footer-time" class="text-[9px] font-mono text-slate-500 font-bold tracking-widest"></p>
+    <footer class="fixed bottom-0 left-0 right-0 glass p-3 text-center z-50">
+        <p id="footer-time" class="text-[9px] font-mono text-slate-500 font-bold tracking-widest uppercase"></p>
+        <p class="text-[8px] text-slate-600 mt-1 uppercase font-black">FB-BOOST ELITE v4.0 • Secured by Blockchain</p>
     </footer>
 
     <script type="module" src="app.js"></script>
